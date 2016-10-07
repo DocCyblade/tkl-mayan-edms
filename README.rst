@@ -33,5 +33,5 @@ Credentials *(passwords set at first boot)*
 .. _GitHub: https://github.com/odoo/odoo
 .. _TurnKey Core: https://www.turnkeylinux.org/core
 .. _Adminer: http://www.adminer.org/
-.. _upstream: https://github.com/DocCyblade/tkl-odoo
-.. _roadmap: https://github.com/DocCyblade/tkl-odoo/milestones
+.. _upstream: https://github.com/DocCyblade/tkl-mayan-edms
+.. _roadmap: https://github.com/DocCyblade/tkl-mayan-edms/milestones
