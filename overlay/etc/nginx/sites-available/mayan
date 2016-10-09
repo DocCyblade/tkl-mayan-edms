@@ -1,7 +1,11 @@
 server {
-    listen 80;
+
+    listen 443 ssl;
+    include /etc/nginx/include/ssl;
+
     server_name localhost;
 
+    # Serve Mayan via uwsgi
     location / {
         include uwsgi_params;
         uwsgi_pass unix:/usr/share/mayan-edms/uwsgi.sock;
@@ -10,13 +14,23 @@ server {
         proxy_read_timeout 30s;  # Increase if your document uploads take more than 30 seconds
     }
 
+    # Serve Mayan static files
     location /static {
         alias /usr/share/mayan-edms/mayan/media/static;
         expires 1h;
     }
 
+    # Fav icon
     location /favicon.ico {
         alias /usr/share/mayan-edms/mayan/media/static/appearance/images/favicon.ico;
         expires 1h;
     }
 }
+
+# Redirect all http to https
+server {
+    listen      80;
+    server_name localhost;
+    return 301  https://$host$request_uri;
+}
+

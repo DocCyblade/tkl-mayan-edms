@@ -1,7 +1,5 @@
 #!/bin/bash -ex
 
-
-
 # Set variables
 #
 DB_NAME=mayan
@@ -9,7 +7,7 @@ DB_USER=mayan
 DB_PASS=$(mcookie)
 
 APP_SETTINGS=/usr/share/mayan-edms/mayan/settings/local.py
-APP_DB_TEMPLATE=/usr/share/mayan-edms/mayan/settings/db_template.py
+APP_SETTINGS_TEMPLATE=/usr/share/mayan-edms/mayan/settings/db_settings.template
 
 # Upgrade python-virtualenv:: (Not sure why, but virtualenv does not work until you upgrade it)
 pip install --upgrade virtualenv
@@ -18,7 +16,6 @@ pip install --upgrade virtualenv
 cd /usr/share
 virtualenv mayan-edms
 
-pwd
 
 # Activate the environment 
 source /usr/share/mayan-edms/bin/activate
@@ -48,13 +45,15 @@ mkdir /var/log/uwsgi
 cd /usr/share/mayan-edms
 ln -s lib/python2.7/site-packages/mayan .
 
+# Make doc store in /srv
+mkdir -p /srv/edms-data/document_storage
 
 # Create an initial settings file and db.template
 # We will recreate this on first boot, but create it
 # here for testing builds.
 mayan-edms.py createsettings -v 3
 
-cat << EOF > $APP_DB_TEMPLATE
+cat << EOF > $APP_SETTINGS_TEMPLATE
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -69,9 +68,17 @@ DATABASES = {
 BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
+STORAGE_FILESTORAGE_LOCATION = '/srv/edms-data/document_storage'
+
 EOF
 
-cat $APP_DB_TEMPLATE >> APP_SETTINGS
+
+
+# Create initial settings
+mayan-edms.py createsettings
+
+# Apply the settings template
+cat $APP_SETTINGS_TEMPLATE >> $APP_SETTINGS
 
 
 # Migrate the database or initialize the project
@@ -89,8 +96,11 @@ ln -s /etc/nginx/sites-available/mayan /etc/nginx/sites-enabled/
 # Collect static files
 mayan-edms.py collectstatic --noinput
 
-# Make the installation directory readable and writable by the webserver user
+
+# Make the installation and directory readable and writable by the webserver user
 chown www-data:www-data /usr/share/mayan-edms -R
+chown www-data:www-data /srv/edms-data -R
+
 
 # Stop postgresql server
 /etc/init.d/postgresql stop
