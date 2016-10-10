@@ -1,0 +1,90 @@
+#!/bin/sh -ex
+
+
+
+# Set variables
+#
+DB_NAME=mayan
+DB_USER=mayan
+DB_PASS=$(mcookie)
+
+APP_SETTINGS=/usr/share/mayan-edms/mayan/settings/local.py
+APP_DB_TEMPLATE=/usr/share/mayan-edms/mayan/settings/db_template.py
+
+# Upgrade python-virtualenv:: (Not sure why, but virtualenv does not work until you upgrade it)
+pip install --upgrade virtualenv
+
+# Create application directory (virtualenv)
+cd /usr/share
+virtualenv mayan-edms
+
+pwd
+
+# Activate the environment 
+source /usr/share/mayan-edms/bin/activate
+
+# Install Mayan EDMS from PyPI
+pip install mayan-edms
+
+# Install the Python client for PostgreSQL, Redis, and uWSGI
+pip install psycopg2 redis uwsgi
+
+# Create the database for the installation
+createuser -P $DB_USER  $DB_PASS
+createdb -O $DB_USER $DB_NAME
+
+
+# Create log file directory for mayan and uwsgi
+mkdir /var/log/mayan
+mkdir /var/log/uwsgi
+
+# Make a convenience symbolic link 
+cd /usr/share/mayan-edms
+ln -s lib/python2.7/site-packages/mayan .
+
+
+# Create an initial settings file and db.template
+# We will recreate this on first boot, but create it
+# here for testing builds.
+mayan-edms.py createsettings -v 3
+
+cat << EOF > $APP_DB_TEMPLATE
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': '$DB_NAME',
+        'USER': '$DB_USER',
+        'PASSWORD': '$DB_PASS',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+
+EOF
+
+cat $APP_DB_TEMPLATE >> APP_SETTINGS
+
+
+# Migrate the database or initialize the project
+# TODO: If using a database with pre-config may want to 
+# change this step to import database
+mayan-edms.py initialsetup -v 3
+
+
+# Disable the default NGINX site
+rm /etc/nginx/sites-enabled/default
+
+# Enable the NGINX site for Mayan EDMS
+ln -s /etc/nginx/sites-available/mayan /etc/nginx/sites-enabled/
+mayan-edms.py collectstatic --noinput
+
+# Collect static files
+mayan-edms.py collectstatic --noinput
+
+# Make the installation directory readable and writable by the webserver user
+chown www-data:www-data /usr/share/mayan-edms -R
+
+
