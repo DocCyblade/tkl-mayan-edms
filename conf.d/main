@@ -85,7 +85,6 @@ rm /etc/nginx/sites-enabled/default
 
 # Enable the NGINX site for Mayan EDMS
 ln -s /etc/nginx/sites-available/mayan /etc/nginx/sites-enabled/
-mayan-edms.py collectstatic --noinput
 
 # Collect static files
 mayan-edms.py collectstatic --noinput
