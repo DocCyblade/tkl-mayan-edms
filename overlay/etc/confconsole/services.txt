@@ -1,4 +1,5 @@
 Mayan EDMS: https://$ipaddr
 Web shell:  https://$ipaddr:12320
 Webmin:     https://$ipaddr:12321
+Adminer:    https://$ipaddr:12322
 SSH/SFTP:   root@$ipaddr (port 22)

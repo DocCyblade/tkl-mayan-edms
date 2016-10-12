@@ -2,10 +2,12 @@
 
 /* Databse and DB Admin Tools */
 postgresql          /* PostgresSQL Server */
-php5-pgsql          /* PHP DB Connector for PostgreSQL */
-webmin-postgresql   /* PostgreSQL Admin for Webmin */
+
 adminer             /* Adminer PHP DB Admin */
-php5-cli            /* PHP Commandline */
+php5-cgi            /* adminer depend *i/
+php5-pgsql          /* needed for adminer pg support */
+
+webmin-postgresql   /* PostgreSQL Admin for Webmin */
 
 
 /* Needed for Mayan EDMS */

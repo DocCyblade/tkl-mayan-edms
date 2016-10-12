@@ -95,3 +95,9 @@ chown www-data:www-data /usr/share/mayan-edms -R
 # Stop postgresql server
 /etc/init.d/postgresql stop
 
+
+# Link Nginx Adminer conifg
+ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/adminer
+
+# Configure fastcgi for Adminer via Nginx (php-fastcgi)
+update-rc.d php-fastcgi defaults
