@@ -2,6 +2,7 @@
 
 # Demo files download function
 # dl [URL] [TARGET DIR] [TARGET FILE NAME] 
+#
 dl() {
     [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
     cd $2; curl -L -f $PROXY $1 -o $3; cd -
@@ -90,6 +91,8 @@ mayan-edms.py createsettings
 cat $APP_SETTINGS_TEMPLATE >> $APP_SETTINGS
 
 
+
+
 # Install DEMO data and database
 # ------------------------------
 DEMO_DIR=/srv/edms-data/demo-data
@@ -123,6 +126,8 @@ cd -
 
 # Load demo database
 psql $DB_NAME < $DEMO_SQL_FILE
+
+
 
 
 # Disable the default NGINX site
