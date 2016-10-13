@@ -123,3 +123,9 @@ case "$1" in
         exit 3
         ;;
 esac
+
+# The colon at the end makes sure that the script returns the correct return value of log_end_msg
+# using systemd with this script, it will fail without this colon! Keep it there! 
+
+:
+
