@@ -121,7 +121,6 @@ cd $APP_SETTINGS_DATA_DIR
 cp $DEMO_FILE5_URL $DEMO_FILE4
 cd -
 
-exit 1
 # Load demo database
 psql $DB_NAME < $DEMO_SQL_FILE
 
