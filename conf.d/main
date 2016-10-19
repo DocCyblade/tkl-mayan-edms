@@ -97,7 +97,7 @@ DEMO_FILE1=9517e03b-c4aa-46b7-a3c6-b2791a06d8b0
 DEMO_FILE_URL1=http://media.readthedocs.org/pdf/django/1.8.x/django.pdf
 
 DEMO_FILE2=1618005c-68ba-4ce9-906c-037e1cd4b988
-DEMO_FILE_URL2=http://readthedocs.org/projects/mayan/downloads/htmlzip/v2.1.3/
+DEMO_FILE_URL2=http://readthedocs.org/projects/mayan/downloads/pdf/v2.1.3/
 
 DEMO_FILE3=928af904-33bd-486b-a99b-9cdf59f60b25
 DEMO_FILE_URL3=http://www.tldp.org/LDP/intro-linux/intro-linux.pdf
@@ -117,8 +117,11 @@ dl $DEMO_FILE_URL1 $APP_SETTINGS_DATA_DIR $DEMO_FILE1
 dl $DEMO_FILE_URL2 $APP_SETTINGS_DATA_DIR $DEMO_FILE2
 dl $DEMO_FILE_URL3 $APP_SETTINGS_DATA_DIR $DEMO_FILE3
 dl $DEMO_FILE_URL4 $APP_SETTINGS_DATA_DIR $DEMO_FILE4
-cp $DEMO_FILE5_URL "$APP_SETTINGS_DATA_DIR\$DEMO_FILE4"
+cd $APP_SETTINGS_DATA_DIR
+cp $DEMO_FILE5_URL $DEMO_FILE4
+cd -
 
+exit 1
 # Load demo database
 psql $DB_NAME < $DEMO_SQL_FILE
 
