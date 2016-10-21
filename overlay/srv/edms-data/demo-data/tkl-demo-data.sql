@@ -3415,6 +3415,8 @@ COPY actstream_action (id, actor_object_id, verb, description, target_object_id,
 19	5	documents_document_edit	\N	5	\N	2016-10-18 10:07:48.906677+00	t	\N	\N	46	46
 20	1	documents_document_new_version	\N	5	\N	2016-10-18 10:07:48.907592+00	t	\N	\N	4	46
 21	1	documents_document_view	\N	1	\N	2016-10-18 10:09:54.024397+00	t	\N	\N	4	46
+22	1	documents_document_view	\N	1	\N	2016-10-21 20:59:25.051455+00	t	\N	\N	4	46
+23	1	documents_document_view	\N	1	\N	2016-10-21 21:09:31.85867+00	t	\N	\N	4	46
 \.
 
 
@@ -3422,7 +3424,7 @@ COPY actstream_action (id, actor_object_id, verb, description, target_object_id,
 -- Name: actstream_action_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('actstream_action_id_seq', 21, true);
+SELECT pg_catalog.setval('actstream_action_id_seq', 23, true);
 
 
 --
@@ -3445,6 +3447,8 @@ SELECT pg_catalog.setval('actstream_follow_id_seq', 1, false);
 --
 
 COPY auth_group (id, name) FROM stdin;
+1	Administrators
+2	EDMS Users
 \.
 
 
@@ -3452,7 +3456,7 @@ COPY auth_group (id, name) FROM stdin;
 -- Name: auth_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('auth_group_id_seq', 1, false);
+SELECT pg_catalog.setval('auth_group_id_seq', 2, true);
 
 
 --
@@ -3730,7 +3734,9 @@ SELECT pg_catalog.setval('auth_permission_id_seq', 240, true);
 --
 
 COPY auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
-1	pbkdf2_sha256$20000$S5IW91KJw0LG$FFDebpEfMYrWOa709bCxldH85wuim/EmY6n6EDUXlTU=	2016-10-18 09:44:34.850304+00	t	admin	Mayan EDMS	TurnKey Linux Admin	autoadmin@example.com	t	t	2016-10-16 17:53:10.950614+00
+3	pbkdf2_sha256$20000$vouLYGJDT7Qu$lS2qbpWVI5MqgD62vJoCoE6navt76690Aa+hn1N+JPY=	\N	f	tkl-admin	Sample	TurnKey Admin	sample@example.com	f	t	2016-10-21 19:21:10.951123+00
+2	pbkdf2_sha256$20000$JcQvRcEHzzjj$85st2uwM5NoJhCW2RZJSV0mIJ4dbpPHBu05ec6ZgCvI=	\N	f	tkl-user	Sample	TurnKey User	sample@example.com	f	t	2016-10-21 19:19:50.736073+00
+1	pbkdf2_sha256$20000$S5IW91KJw0LG$FFDebpEfMYrWOa709bCxldH85wuim/EmY6n6EDUXlTU=	2016-10-21 21:04:28.327867+00	t	admin	Mayan EDMS	Super Admin	autoadmin@example.com	t	t	2016-10-16 17:53:10.950614+00
 \.
 
 
@@ -3739,6 +3745,8 @@ COPY auth_user (id, password, last_login, is_superuser, username, first_name, la
 --
 
 COPY auth_user_groups (id, user_id, group_id) FROM stdin;
+1	3	1
+2	2	2
 \.
 
 
@@ -3746,14 +3754,14 @@ COPY auth_user_groups (id, user_id, group_id) FROM stdin;
 -- Name: auth_user_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('auth_user_groups_id_seq', 1, false);
+SELECT pg_catalog.setval('auth_user_groups_id_seq', 2, true);
 
 
 --
 -- Name: auth_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('auth_user_id_seq', 1, true);
+SELECT pg_catalog.setval('auth_user_id_seq', 3, true);
 
 
 --
@@ -3861,6 +3869,8 @@ SELECT pg_catalog.setval('common_shareduploadedfile_id_seq', 5, true);
 
 COPY common_userlocaleprofile (id, timezone, language, user_id) FROM stdin;
 1			1
+2			2
+3			3
 \.
 
 
@@ -3868,7 +3878,7 @@ COPY common_userlocaleprofile (id, timezone, language, user_id) FROM stdin;
 -- Name: common_userlocaleprofile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('common_userlocaleprofile_id_seq', 1, true);
+SELECT pg_catalog.setval('common_userlocaleprofile_id_seq', 3, true);
 
 
 --
@@ -4195,17 +4205,6 @@ SELECT pg_catalog.setval('django_migrations_id_seq', 153, true);
 
 
 --
--- Data for Name: django_session; Type: TABLE DATA; Schema: public; Owner: mayan
---
-
-COPY django_session (session_key, session_data, expire_date) FROM stdin;
-zut1ihmzteg7p7cveiwi2la3e9spsa0d	ZmFhOGJlMTk0ZWFkMzdjZmMzZTMxYTQ4NzFkMWMzMzhkMGJhZWE1ZTp7Il9hdXRoX3VzZXJfaGFzaCI6IjYxY2IxNzg2ZDc0MGI4ZTFhOGFiNWRlOGRhZWM4ODRmZmViZDIxNTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-10-31 15:20:03.025665+00
-ijgwsr0kdhbamn5i7vpmlhknqbxonzm8	OTBkNjViYzkyNDY3Mzg4MDRlNjNkNmFjYTliNWRjNDlmYmVjOGM2NDp7Il9hdXRoX3VzZXJfaGFzaCI6IjViMzRhZjg4ZjcxNzNkOGM2OWU4NzZiMmYwMjM5MjU2MjgxZjAwZmQiLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIn0=	2016-10-31 18:32:02.729742+00
-scqcp57o0binnco7wcqlf7knaakfac8d	OTcwNThjMWNiZjc3ODlkMjgyYjQ4NGIwMzc5Y2RlMzY5MDk1NGZiNDp7Il9hdXRoX3VzZXJfaGFzaCI6IjViMzRhZjg4ZjcxNzNkOGM2OWU4NzZiMmYwMjM5MjU2MjgxZjAwZmQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-11-01 09:36:19.42512+00
-\.
-
-
---
 -- Data for Name: django_site; Type: TABLE DATA; Schema: public; Owner: mayan
 --
 
@@ -4260,18 +4259,18 @@ SELECT pg_catalog.setval('djcelery_intervalschedule_id_seq', 2, true);
 --
 
 COPY djcelery_periodictask (id, name, task, args, kwargs, queue, exchange, routing_key, expires, enabled, last_run_at, total_run_count, date_changed, description, crontab_id, interval_id) FROM stdin;
-4	task_check_delete_periods	documents.tasks.task_check_delete_periods	[]	{}	\N	\N	\N	\N	t	2016-10-18 10:09:55.852717+00	313	2016-10-18 10:10:51.751069+00		\N	1
-6	task_check_trash_periods	documents.tasks.task_check_trash_periods	[]	{}	\N	\N	\N	\N	t	2016-10-18 10:09:55.878849+00	313	2016-10-18 10:10:51.75417+00		\N	1
-7	task_check_expired_check_outs	checkouts.tasks.task_check_expired_check_outs	[]	{}	\N	\N	\N	\N	t	2016-10-18 10:09:55.830336+00	312	2016-10-18 10:10:51.756684+00		\N	1
-2	statistics.task_execute_statistic_total-document-versions-at-each-month	statistics.tasks.task_execute_statistic	["total-document-versions-at-each-month"]	{}	\N	\N	\N	\N	t	2016-10-18 10:00:00.011471+00	7	2016-10-18 10:01:55.853255+00		2	\N
-3	statistics.task_execute_statistic_total-documents-at-each-month	statistics.tasks.task_execute_statistic	["total-documents-at-each-month"]	{}	\N	\N	\N	\N	t	2016-10-18 10:00:00.014953+00	7	2016-10-18 10:01:55.855411+00		2	\N
-5	statistics.task_execute_statistic_total-document-pages-at-each-month	statistics.tasks.task_execute_statistic	["total-document-pages-at-each-month"]	{}	\N	\N	\N	\N	t	2016-10-18 10:00:00.025719+00	7	2016-10-18 10:01:55.860191+00		2	\N
-9	statistics.task_execute_statistic_new-documents-per-month	statistics.tasks.task_execute_statistic	["new-documents-per-month"]	{}	\N	\N	\N	\N	t	2016-10-18 10:00:00.005364+00	7	2016-10-18 10:01:55.867046+00		2	\N
-11	statistics.task_execute_statistic_new-document-versions-per-month	statistics.tasks.task_execute_statistic	["new-document-versions-per-month"]	{}	\N	\N	\N	\N	t	2016-10-18 10:00:00.022035+00	7	2016-10-18 10:01:55.868994+00		2	\N
-12	statistics.task_execute_statistic_new-document-pages-per-month	statistics.tasks.task_execute_statistic	["new-document-pages-per-month"]	{}	\N	\N	\N	\N	t	2016-10-18 10:00:00.000328+00	7	2016-10-18 10:01:55.870906+00		2	\N
-1	celery.backend_cleanup	celery.backend_cleanup	[]	{}	\N	\N	\N	\N	t	\N	0	2016-10-18 09:35:55.699481+00		1	\N
-8	task_delete_stubs	documents.tasks.task_delete_stubs	[]	{}	\N	\N	\N	\N	t	2016-10-18 10:05:55.801207+00	31	2016-10-18 10:08:55.838029+00		\N	2
-10	task_delete_stale_uploads	common.tasks.task_delete_stale_uploads	[]	{}	\N	\N	\N	\N	t	2016-10-18 10:05:55.807834+00	31	2016-10-18 10:08:55.840539+00		\N	2
+9	statistics.task_execute_statistic_new-documents-per-month	statistics.tasks.task_execute_statistic	["new-documents-per-month"]	{}	\N	\N	\N	\N	t	2016-10-21 21:00:00.180462+00	10	2016-10-21 21:17:05.004503+00		2	\N
+11	statistics.task_execute_statistic_new-document-versions-per-month	statistics.tasks.task_execute_statistic	["new-document-versions-per-month"]	{}	\N	\N	\N	\N	t	2016-10-21 21:00:00.206055+00	10	2016-10-21 21:17:05.023466+00		2	\N
+12	statistics.task_execute_statistic_new-document-pages-per-month	statistics.tasks.task_execute_statistic	["new-document-pages-per-month"]	{}	\N	\N	\N	\N	t	2016-10-21 21:00:00.175696+00	10	2016-10-21 21:17:05.037972+00		2	\N
+10	task_delete_stale_uploads	common.tasks.task_delete_stale_uploads	[]	{}	\N	\N	\N	\N	t	2016-10-21 21:17:08.343976+00	35	2016-10-21 21:20:05.11896+00		\N	2
+8	task_delete_stubs	documents.tasks.task_delete_stubs	[]	{}	\N	\N	\N	\N	t	2016-10-21 21:17:08.329753+00	35	2016-10-21 21:20:05.126713+00		\N	2
+7	task_check_expired_check_outs	checkouts.tasks.task_check_expired_check_outs	[]	{}	\N	\N	\N	\N	t	2016-10-21 21:22:05.09443+00	340	2016-10-21 21:22:53.023659+00		\N	1
+4	task_check_delete_periods	documents.tasks.task_check_delete_periods	[]	{}	\N	\N	\N	\N	t	2016-10-21 21:22:05.109007+00	341	2016-10-21 21:22:53.029487+00		\N	1
+6	task_check_trash_periods	documents.tasks.task_check_trash_periods	[]	{}	\N	\N	\N	\N	t	2016-10-21 21:22:05.150685+00	341	2016-10-21 21:22:53.031887+00		\N	1
+1	celery.backend_cleanup	celery.backend_cleanup	[]	{}	\N	\N	\N	\N	t	\N	0	2016-10-21 21:17:04.871966+00		1	\N
+2	statistics.task_execute_statistic_total-document-versions-at-each-month	statistics.tasks.task_execute_statistic	["total-document-versions-at-each-month"]	{}	\N	\N	\N	\N	t	2016-10-21 21:00:00.193278+00	10	2016-10-21 21:17:04.887818+00		2	\N
+3	statistics.task_execute_statistic_total-documents-at-each-month	statistics.tasks.task_execute_statistic	["total-documents-at-each-month"]	{}	\N	\N	\N	\N	t	2016-10-21 21:00:00.19809+00	10	2016-10-21 21:17:04.900661+00		2	\N
+5	statistics.task_execute_statistic_total-document-pages-at-each-month	statistics.tasks.task_execute_statistic	["total-document-pages-at-each-month"]	{}	\N	\N	\N	\N	t	2016-10-21 21:00:00.212702+00	10	2016-10-21 21:17:04.938892+00		2	\N
 \.
 
 
@@ -4287,7 +4286,7 @@ SELECT pg_catalog.setval('djcelery_periodictask_id_seq', 12, true);
 --
 
 COPY djcelery_periodictasks (ident, last_update) FROM stdin;
-1	2016-10-18 09:35:55.764382+00
+1	2016-10-21 21:17:05.036445+00
 \.
 
 
@@ -4342,8 +4341,8 @@ SELECT pg_catalog.setval('document_comments_comment_id_seq', 1, false);
 
 COPY document_indexing_index (id, label, enabled, slug) FROM stdin;
 1	Creation date	t	creation_date
-2	Author	t	by-author
-3	Publish Date	t	by-pub-date
+2	Author	t	by_author
+3	Publish Date	t	by_pub_date
 \.
 
 
@@ -4354,6 +4353,10 @@ COPY document_indexing_index (id, label, enabled, slug) FROM stdin;
 COPY document_indexing_index_document_types (id, index_id, documenttype_id) FROM stdin;
 1	1	1
 2	1	2
+3	2	1
+4	2	2
+5	3	1
+6	3	2
 \.
 
 
@@ -4361,7 +4364,7 @@ COPY document_indexing_index_document_types (id, index_id, documenttype_id) FROM
 -- Name: document_indexing_index_document_types_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('document_indexing_index_document_types_id_seq', 2, true);
+SELECT pg_catalog.setval('document_indexing_index_document_types_id_seq', 6, true);
 
 
 --
@@ -4376,9 +4379,19 @@ SELECT pg_catalog.setval('document_indexing_index_id_seq', 3, true);
 --
 
 COPY document_indexing_indexinstancenode (id, value, lft, rght, tree_id, level, index_template_node_id, parent_id) FROM stdin;
-8	2016	2	5	1	1	2	1
-1		1	6	1	0	1	\N
-9	10	3	4	1	2	3	8
+10		1	6	1	0	1	\N
+11	2016	2	5	1	1	2	10
+12	10	3	4	1	2	3	11
+14	Lars Wirzenius/Joanna Oja/Stephen Stafford/Alex Weeks	2	3	2	1	5	13
+16	2004	2	3	3	1	7	15
+17	Machtelt Garrels	4	5	2	1	5	13
+18	2008	4	5	3	1	7	15
+19	Roberto Rosario	6	7	2	1	5	13
+15		1	8	3	0	6	\N
+20	2016	6	7	3	1	7	15
+21	Django Software Foundation	8	9	2	1	5	13
+13		1	12	2	0	4	\N
+22	TurnKey Linux	10	11	2	1	5	13
 \.
 
 
@@ -4387,11 +4400,21 @@ COPY document_indexing_indexinstancenode (id, value, lft, rght, tree_id, level, 
 --
 
 COPY document_indexing_indexinstancenode_documents (id, indexinstancenode_id, document_id) FROM stdin;
-7	9	2
-12	9	3
-16	9	4
-19	9	5
-21	9	1
+22	12	5
+23	14	5
+24	16	5
+25	12	4
+26	17	4
+27	18	4
+28	12	3
+29	19	3
+30	20	3
+31	12	2
+32	21	2
+33	20	2
+34	12	1
+35	22	1
+36	20	1
 \.
 
 
@@ -4399,14 +4422,14 @@ COPY document_indexing_indexinstancenode_documents (id, indexinstancenode_id, do
 -- Name: document_indexing_indexinstancenode_documents_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('document_indexing_indexinstancenode_documents_id_seq', 21, true);
+SELECT pg_catalog.setval('document_indexing_indexinstancenode_documents_id_seq', 36, true);
 
 
 --
 -- Name: document_indexing_indexinstancenode_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('document_indexing_indexinstancenode_id_seq', 9, true);
+SELECT pg_catalog.setval('document_indexing_indexinstancenode_id_seq', 22, true);
 
 
 --
@@ -4420,7 +4443,7 @@ COPY document_indexing_indextemplatenode (id, expression, enabled, link_document
 4		t	f	1	4	2	0	2	\N
 5	{{ document.metadata_value_of.doc_author }}	t	t	2	3	2	1	2	4
 6		t	f	1	4	3	0	3	\N
-7	{{ document.metadata_value_of. doc_pub_year }}	t	t	2	3	3	1	3	6
+7	{{ document.metadata_value_of.doc_pub_year }}	t	t	2	3	3	1	3	6
 \.
 
 
@@ -6747,7 +6770,7 @@ COPY documents_recentdocument (id, datetime_accessed, document_id, user_id) FROM
 3	2016-10-18 10:03:40.09456+00	3	1
 4	2016-10-18 10:05:13.835268+00	4	1
 5	2016-10-18 10:07:48.926453+00	5	1
-1	2016-10-18 10:10:17.415633+00	1	1
+1	2016-10-21 21:09:31.854519+00	1	1
 \.
 
 
@@ -6886,7 +6909,7 @@ COPY lock_manager_lock (id, creation_datetime, timeout, name) FROM stdin;
 -- Name: lock_manager_lock_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('lock_manager_lock_id_seq', 397, true);
+SELECT pg_catalog.setval('lock_manager_lock_id_seq', 428, true);
 
 
 --
@@ -6975,7 +6998,7 @@ SELECT pg_catalog.setval('metadata_metadatatype_id_seq', 4, true);
 --
 
 COPY motd_message (id, label, message, enabled, start_datetime, end_datetime) FROM stdin;
-1	TurnKey Mayan EDMS - Welcome	Welcome to TurnKey Linux's Mayan EDMS Appliance!\r\n\r\nTo get started use the below login credentials:\r\n     UserID:  admin\r\nPassword: TurnKey\r\n----------------------------\r\nThis is the Message of The Day, and should be removed once you have changed the admin password !	t	\N	\N
+1	TurnKey Mayan EDMS - Welcome	Welcome to TurnKey Linux's Mayan EDMS Appliance!\r\n\r\nTo get started use one of the below login credentials:\r\n----------------------------\r\n   Super Admin:  admin\r\nSample Admin:  tkl-admin\r\n    Sample User:  tkl-user\r\n----------------------------\r\nAll Passwords: TurnKey\r\n----------------------------\r\nThis is the Message of The Day, and should be removed once you have changed the admin passwords !	t	\N	\N
 \.
 
 
@@ -7048,6 +7071,8 @@ COPY permissions_role (id, label) FROM stdin;
 --
 
 COPY permissions_role_groups (id, role_id, group_id) FROM stdin;
+1	2	2
+2	1	1
 \.
 
 
@@ -7055,7 +7080,7 @@ COPY permissions_role_groups (id, role_id, group_id) FROM stdin;
 -- Name: permissions_role_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('permissions_role_groups_id_seq', 1, false);
+SELECT pg_catalog.setval('permissions_role_groups_id_seq', 2, true);
 
 
 --
@@ -7189,6 +7214,15 @@ COPY permissions_storedpermission (id, namespace, name) FROM stdin;
 67	metadata	metadata_document_add
 68	metadata	metadata_document_edit
 69	metadata	metadata_document_remove
+70	document_indexing	document_rebuild_indexes
+71	document_signatures	document_version_signature_verify
+72	installation	installation_details
+73	mailing	view_error_log
+74	statistics	statistics_view
+75	user_management	group_edit
+76	user_management	group_delete
+77	user_management	user_edit
+78	user_management	user_delete
 \.
 
 
@@ -7196,7 +7230,7 @@ COPY permissions_storedpermission (id, namespace, name) FROM stdin;
 -- Name: permissions_storedpermission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('permissions_storedpermission_id_seq', 69, true);
+SELECT pg_catalog.setval('permissions_storedpermission_id_seq', 78, true);
 
 
 --
@@ -7309,12 +7343,12 @@ COPY sources_webformsource (interactivesource_ptr_id, uncompress) FROM stdin;
 --
 
 COPY statistics_statisticresult (id, slug, datetime, serialize_data) FROM stdin;
-37	new-document-pages-per-month	2016-10-18 10:00:00.029431+00	{"series": {"Pages": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 1}]}}
-38	new-documents-per-month	2016-10-18 10:00:00.040062+00	{"series": {"Documents": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 1}]}}
-39	total-document-versions-at-each-month	2016-10-18 10:00:00.066781+00	{"series": {"Versions": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 1}]}}
-40	total-documents-at-each-month	2016-10-18 10:00:00.074896+00	{"series": {"Documents": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 1}]}}
-41	new-document-versions-per-month	2016-10-18 10:00:00.096148+00	{"series": {"Versions": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 1}]}}
-42	total-document-pages-at-each-month	2016-10-18 10:00:00.102457+00	{"series": {"Pages": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 1}]}}
+64	new-document-versions-per-month	2016-10-21 21:00:00.318656+00	{"series": {"Versions": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 5}]}}
+65	total-document-pages-at-each-month	2016-10-21 21:00:00.343733+00	{"series": {"Pages": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 2066}]}}
+60	new-document-pages-per-month	2016-10-21 21:00:00.226592+00	{"series": {"Pages": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 2066}]}}
+61	new-documents-per-month	2016-10-21 21:00:00.245396+00	{"series": {"Documents": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 5}]}}
+62	total-document-versions-at-each-month	2016-10-21 21:00:00.268656+00	{"series": {"Versions": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 5}]}}
+63	total-documents-at-each-month	2016-10-21 21:00:00.292973+00	{"series": {"Documents": [{"1": 0}, {"2": 0}, {"3": 0}, {"4": 0}, {"5": 0}, {"6": 0}, {"7": 0}, {"8": 0}, {"9": 0}, {"10": 5}]}}
 \.
 
 
@@ -7322,7 +7356,7 @@ COPY statistics_statisticresult (id, slug, datetime, serialize_data) FROM stdin;
 -- Name: statistics_statisticresult_id_seq; Type: SEQUENCE SET; Schema: public; Owner: mayan
 --
 
-SELECT pg_catalog.setval('statistics_statisticresult_id_seq', 42, true);
+SELECT pg_catalog.setval('statistics_statisticresult_id_seq', 65, true);
 
 
 --
