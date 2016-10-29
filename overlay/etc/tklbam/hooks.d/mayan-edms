@@ -83,7 +83,7 @@ function post_restore {
 
     if [ -f $restore_mayan_enable_file ]; then
 
-        echo "migration file $restore_mayan_enable_file found! 
+        echo "migration file $restore_mayan_enable_file found!" 
         echo "Upgrade Mayan to $restore_mayan_version" 
     
         # Change to the virtualenv
