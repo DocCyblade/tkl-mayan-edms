@@ -1,0 +1,157 @@
+#!/bin/bash -e
+
+# -----------------------------------------------------------------
+# TurnKey Mayan EDMS Backup/Restore TKLBAM Hook Script
+# ----------------------------------------------------------------- 
+# THIS SCRIPT IS PART OF TURNKEY LINUX MAYAN EDMS
+#
+# Script by Ken Robinson (https://github.com/DocCyblade)
+# SOURCE:(https://github.com/DocCyblade/tkl-mayan-edms)
+#
+# During backup, services are stopped to ensure the database is in a
+# known state. The services are restarted after backup is complete
+#
+# Restore hooks are disabled by default, as it will perform a 
+# upgrade via PIP following Mayan EDMS upgrade steps. 
+# To enable migration/upgrade hooks perform the following as root
+# then run the TKLBAM restore command.
+#
+#    Command:  touch ~/.enable_mayan_restore
+#
+# -----------------------------------------------------------------
+
+# hooks are always called with two arguments
+op=$1
+state=$2
+
+# Change this in your function to a non zero to raise a hook error
+exit_code=0
+
+# File if exists will trigger a upgrade of Mayan
+restore_mayan_enable_file=~/.enable_mayan_restore
+
+# Version of Mayan EDMS to upgrade to after a restore
+restore_mayan_version=v2.1.4
+
+
+# -----------------------------------
+#  BACKUP - PRE,INSPECT,POST
+# -----------------------------------
+
+# Add code in this function that will run BEFORE the BACKUP
+function pre_backup {
+    echo "Stop services to keep database in known state before backup"
+
+    # Stop services to keep database in known state
+    supervisorctl stop all
+    
+}
+
+# Add code in this function that will run BEFORE Duplicity uploads backup archive
+function inspect_backup {
+    # Nothing here    
+}
+
+# Add code in this function that will run AFTER the BACKUP
+function post_backup {
+    echo "Restart services after backup"
+    
+    # Restart services
+    supervisorctl start all
+}
+
+
+# -----------------------------------
+#  RESTORE - PRE,INSPECT,POST
+# -----------------------------------
+
+# Add code in this function that will run BEFORE the RESTORE
+function pre_restore {
+    echo "Stop services so we can update database and code base"
+    supervisorctl stop all
+}
+
+
+# Add code in this function that will run after Duplicity downloads backup archive
+function inspect_restore {
+    # Nothing here    
+}
+
+# Add code in this function that will run AFTER the RESTORE
+function post_restore {
+
+
+    if [ -f $restore_mayan_enable_file ]; then
+
+        echo "migration file $restore_mayan_enable_file found! 
+        echo "Upgrade Mayan to $restore_mayan_version" 
+    
+        # Change to the virtualenv
+        cd /usr/share/mayan-edms
+        source bin/activate
+    
+        # Upgrade instance
+        pip install -U mayan-edms==$restore_mayan_version
+    
+        # Migrate database 
+        mayan-edms.py performupgrade
+    
+        # Upgrade static media
+        mayan-edms.py collectstatic --noinput
+    
+        # Restart services
+        supervisorctl start all
+    
+        # Exit out of virtualenv
+        deactivate
+    
+        echo "Upgrade Complete"
+
+    else
+        echo "$restore_mayan_enable_file does not exist! "
+        echo "Restore hooks are disabled by default, as it will perform a" 
+        echo "upgrade via PIP following Mayan EDMS upgrade steps. "
+        echo "To enable migration/upgrade hooks perform the following as root "
+        echo "then run the TKLBAM restore command. "
+        echo ""
+        echo "    Command:  touch ~/.enable_mayan_restore"
+        echo ""
+    fi
+}
+
+
+
+#
+# Main script here, calls the correct function and outputs some debug echo lines
+#
+echo -n "HOOK $0 :: op=$op state=$state pwd=$(pwd) :: "
+
+if [ "$state" = "pre" ]; then
+
+    if [ "$op" = "restore" ]; then
+        pre_restore
+    elif [ "$op" = "backup" ]; then
+        pre_backup
+    fi
+
+elif [ "$state" = "inspect" ]; then
+        inspect_backup
+    if [ "$op" = "restore" ]; then
+        inspect_restore
+    elif [ "$op" = "backup" ]; then
+        
+    fi
+
+elif [ "$state" = "post" ]; then
+
+    if [ "$op" = "restore" ]; then
+        post_restore
+    elif [ "$op" = "backup" ]; then
+        post_backup
+    fi
+
+else
+    echo "bad hook invocation"
+fi
+
+exit $exit_code
