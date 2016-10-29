@@ -15,9 +15,13 @@ DB_NAME=mayan
 DB_USER=mayan
 DB_PASS=$(mcookie)
 
+
+# Version of Mayan that this build will be based on
+MAYAN_APP_VER=v2.1.4
+
 APP_SETTINGS=/usr/share/mayan-edms/mayan/settings/local.py
 APP_SETTINGS_TEMPLATE=/usr/share/mayan-edms/mayan/settings/db_settings.template
-APP_SETTINGS_DATA_DIR=/srv/edms-data/document_storage
+APP_SETTINGS_DATA_DIR=/usr/share/mayan-edms/mayan/media/document_storage
 
 # Upgrade python-virtualenv:: (Not sure why, but virtualenv does not work until you upgrade it)
 pip install --upgrade virtualenv
@@ -30,8 +34,13 @@ virtualenv mayan-edms
 # Activate the environment 
 source /usr/share/mayan-edms/bin/activate
 
+# Due to issue with setuptools v28.7.0 is broken use v28.6.1
+# See https://github.com/pypa/setuptools/issues/833
+# See https://github.com/DocCyblade/tkl-mayan-edms/issues/38
+pip install -U pip wheel setuptools==28.6.1
+
 # Install Mayan EDMS from PyPI
-pip install mayan-edms
+pip install mayan-edms==$MAYAN_APP_VER
 
 # Install the Python client for PostgreSQL, Redis, and uWSGI
 pip install psycopg2 redis uwsgi
@@ -55,8 +64,8 @@ mkdir /var/log/uwsgi
 cd /usr/share/mayan-edms
 ln -s lib/python2.7/site-packages/mayan .
 
-# Make doc store in /srv
-mkdir -p /srv/edms-data/document_storage
+# Make doc store
+mkdir -p $APP_SETTINGS_DATA_DIR
 
 # Create an initial settings file and db.template
 # We will recreate this on first boot, but create it
@@ -78,8 +87,6 @@ DATABASES = {
 BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
-STORAGE_FILESTORAGE_LOCATION = '$APP_SETTINGS_DATA_DIR'
-
 EOF
 
 
@@ -95,7 +102,9 @@ cat $APP_SETTINGS_TEMPLATE >> $APP_SETTINGS
 
 # Install DEMO data and database
 # ------------------------------
-DEMO_DIR=/srv/edms-data/demo-data
+DEMO_DIR=/usr/share/tkl-mayan-edms/demo-data
+DOCS_DIR=/usr/share/tkl-mayan-edms/docs
+
 DEMO_FILE1=9517e03b-c4aa-46b7-a3c6-b2791a06d8b0
 DEMO_FILE_URL1=http://media.readthedocs.org/pdf/django/1.8.x/django.pdf
 
@@ -108,8 +117,8 @@ DEMO_FILE_URL3=http://www.tldp.org/LDP/intro-linux/intro-linux.pdf
 DEMO_FILE4=3abf29ee-de4e-4bde-80b8-0a3f1ebb6b1a
 DEMO_FILE_URL4=http://www.tldp.org/LDP/sag/sag.pdf
 
-DEMO_FILE5=91d4ad76-6b29-47f3-9970-2f4cee9d238a
-DEMO_FILE5_URL=/srv/edms-data/demo-data/TKL-MayanEDMS-Welcome.pdf
+DEMO_FILE5=b40cba85-d85a-4a6a-b397-87991576824d
+DEMO_FILE5_URL=$DOCS_DIR/TKL-MayanEDMS-Welcome.pdf
 
 DEMO_SQL_FILE=$DEMO_DIR/tkl-demo-data.sql
 
@@ -142,8 +151,6 @@ mayan-edms.py collectstatic --noinput
 
 # Make the installation and directory readable and writable by the webserver user
 chown www-data:www-data /usr/share/mayan-edms -R
-chown www-data:www-data /srv/edms-data -R
-
 
 # Stop postgresql server
 /etc/init.d/postgresql stop
