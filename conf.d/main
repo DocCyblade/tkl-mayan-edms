@@ -34,11 +34,6 @@ virtualenv mayan-edms
 # Activate the environment 
 source /usr/share/mayan-edms/bin/activate
 
-# Due to issue with setuptools v28.7.0 is broken use v28.6.1
-# See https://github.com/pypa/setuptools/issues/833
-# See https://github.com/DocCyblade/tkl-mayan-edms/issues/38
-pip install -U pip wheel setuptools==28.6.1
-
 # Install Mayan EDMS from PyPI
 pip install mayan-edms==$MAYAN_APP_VER
 
