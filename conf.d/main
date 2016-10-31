@@ -8,6 +8,19 @@ dl() {
     cd $2; curl -L -f $PROXY $1 -o $3; cd -
 }
 
+# Use FAB proxy with PIP
+# fab-pip-install [package]
+fab-pip-install() {
+   [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
+   pip $PROXY install $1
+}
+
+# Use FAB proxy with PIP Upgrade
+# fab-pip-upgrade [package]
+fab-pip-upgrade() {
+   [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
+   pip $PROXY install -U $1
+}
 
 # Set variables
 #
@@ -16,29 +29,32 @@ DB_USER=mayan
 DB_PASS=$(mcookie)
 
 
-# Version of Mayan that this build will be based on
-MAYAN_APP_VER=v2.1.4
-
 APP_SETTINGS=/usr/share/mayan-edms/mayan/settings/local.py
 APP_SETTINGS_TEMPLATE=/usr/share/mayan-edms/mayan/settings/db_settings.template
 APP_SETTINGS_DATA_DIR=/usr/share/mayan-edms/mayan/media/document_storage
-
-# Upgrade python-virtualenv:: (Not sure why, but virtualenv does not work until you upgrade it)
-pip install --upgrade virtualenv
 
 # Create application directory (virtualenv)
 cd /usr/share
 virtualenv mayan-edms
 
-
 # Activate the environment 
 source /usr/share/mayan-edms/bin/activate
 
-# Install Mayan EDMS from PyPI
-pip install mayan-edms==$MAYAN_APP_VER
+# Upgrade PIP within the virtualenv
+fab-pip-upgrade pip
 
-# Install the Python client for PostgreSQL, Redis, and uWSGI
-pip install psycopg2 redis uwsgi
+# Install Mayan EDMS from PyPI
+fab-pip-install mayan-edms
+
+# Install Python client for PostgreSQL
+fab-pip-install psycopg2 
+
+# Install Python client for Redis key-value store
+fab-pip-install redis 
+
+# Install Python uWSGI server
+fab-pip-install uwsgi
+
 
 # Start postgresql server
 /etc/init.d/postgresql start
@@ -104,7 +120,7 @@ DEMO_FILE1=9517e03b-c4aa-46b7-a3c6-b2791a06d8b0
 DEMO_FILE_URL1=http://media.readthedocs.org/pdf/django/1.8.x/django.pdf
 
 DEMO_FILE2=1618005c-68ba-4ce9-906c-037e1cd4b988
-DEMO_FILE_URL2=http://readthedocs.org/projects/mayan/downloads/pdf/v2.1.3/
+DEMO_FILE_URL2=http://readthedocs.org/projects/mayan/downloads/pdf/latest/
 
 DEMO_FILE3=928af904-33bd-486b-a99b-9cdf59f60b25
 DEMO_FILE_URL3=http://www.tldp.org/LDP/intro-linux/intro-linux.pdf
@@ -131,7 +147,8 @@ cd -
 # Load demo database
 psql $DB_NAME < $DEMO_SQL_FILE
 
-
+# Make sure demo data is updated
+mayan-edms.py performupgrade
 
 
 # Disable the default NGINX site

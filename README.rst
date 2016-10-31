@@ -29,8 +29,7 @@ Credentials *(passwords set at first boot)*
 -  Mayan EDMS Admin Account: **admin**
 
 .. _Mayan EDMS: http://www.mayan-edms.com
-.. _PyPI: https://pypi.python.org/pypi/mayan-edms/2.1.3
-.. _GitHub: https://github.com/odoo/odoo
+.. _PyPI: https://pypi.python.org/pypi/mayan-edms
 .. _TurnKey Core: https://www.turnkeylinux.org/core
 .. _Adminer: http://www.adminer.org/
 .. _upstream: https://github.com/DocCyblade/tkl-mayan-edms
