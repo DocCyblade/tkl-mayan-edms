@@ -30,7 +30,7 @@ DB_PASS=$(mcookie)
 
 
 APP_SETTINGS=/usr/share/mayan-edms/mayan/settings/local.py
-APP_SETTINGS_TEMPLATE=/usr/share/mayan-edms/mayan/settings/db_settings.template
+APP_SETTINGS_TEMPLATE=/usr/share/mayan-edms/mayan/settings/settings.template
 APP_SETTINGS_DATA_DIR=/usr/share/mayan-edms/mayan/media/document_storage
 
 # Create application directory (virtualenv)
@@ -98,6 +98,9 @@ DATABASES = {
 BROKER_URL = 'redis://127.0.0.1:6379/0'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
+
 EOF
 
 
@@ -109,46 +112,8 @@ mayan-edms.py createsettings
 cat $APP_SETTINGS_TEMPLATE >> $APP_SETTINGS
 
 
-
-
-# Install DEMO data and database
-# ------------------------------
-DEMO_DIR=/usr/share/tkl-mayan-edms/demo-data
-DOCS_DIR=/usr/share/tkl-mayan-edms/docs
-
-DEMO_FILE1=9517e03b-c4aa-46b7-a3c6-b2791a06d8b0
-DEMO_FILE_URL1=http://media.readthedocs.org/pdf/django/1.8.x/django.pdf
-
-DEMO_FILE2=1618005c-68ba-4ce9-906c-037e1cd4b988
-DEMO_FILE_URL2=http://readthedocs.org/projects/mayan/downloads/pdf/latest/
-
-DEMO_FILE3=928af904-33bd-486b-a99b-9cdf59f60b25
-DEMO_FILE_URL3=http://www.tldp.org/LDP/intro-linux/intro-linux.pdf
-
-DEMO_FILE4=3abf29ee-de4e-4bde-80b8-0a3f1ebb6b1a
-DEMO_FILE_URL4=http://www.tldp.org/LDP/sag/sag.pdf
-
-DEMO_FILE5=b40cba85-d85a-4a6a-b397-87991576824d
-DEMO_FILE5_URL=$DOCS_DIR/TKL-MayanEDMS-Welcome.pdf
-
-DEMO_SQL_FILE=$DEMO_DIR/tkl-demo-data.sql
-
-# Download demo files
-# dl [URL] [TARGET DIR] [TARGET FILE NAME] 
-
-dl $DEMO_FILE_URL1 $APP_SETTINGS_DATA_DIR $DEMO_FILE1
-dl $DEMO_FILE_URL2 $APP_SETTINGS_DATA_DIR $DEMO_FILE2
-dl $DEMO_FILE_URL3 $APP_SETTINGS_DATA_DIR $DEMO_FILE3
-dl $DEMO_FILE_URL4 $APP_SETTINGS_DATA_DIR $DEMO_FILE4
-cd $APP_SETTINGS_DATA_DIR
-cp $DEMO_FILE5_URL $DEMO_FILE5
-cd -
-
-# Load demo database
-psql $DB_NAME < $DEMO_SQL_FILE
-
-# Make sure demo data is updated
-mayan-edms.py performupgrade
+# Init Mayan Database
+mayan-edms.py initialsetup
 
 
 # Disable the default NGINX site
