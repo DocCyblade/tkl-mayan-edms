@@ -26,6 +26,7 @@ libpq-dev           /* header files for libpq5 */
 libjpeg-dev         /* Development files for the JPEG library */
 libpng-dev          /* PNG library - development */
 libtiff-dev         /* Tag Image File Format library (TIFF) */
+python-passlib      /* Comprehensive password hashing framework */
 
 libreoffice         /* office productivity suite */
 libmagic1           /* File type determination library using "magic" numbers */
