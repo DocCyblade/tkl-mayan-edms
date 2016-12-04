@@ -61,7 +61,7 @@ def main():
 
     p = PostgreSQL(database='mayan')
 
-    p.execute('DELETE FROM autoadmin_autoadminsingleton WHERE (\'id\' = \'1\');')
+    p.execute('UPDATE autoadmin_autoadminsingleton SET password = NULL, password_hash = NULL, account_id = NULL WHERE (id = 1);')
     p.execute('UPDATE auth_user SET email = \'%s\' WHERE username = \'admin\';' % email)
     p.execute('UPDATE auth_user SET password = \'%s\' WHERE username = \'admin\';' % hashpass)
 
