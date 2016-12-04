@@ -84,6 +84,9 @@ mkdir -p $APP_SETTINGS_DATA_DIR
 mayan-edms.py createsettings -v 3
 
 cat << EOF > $APP_SETTINGS_TEMPLATE
+
+DEBUG = False
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
