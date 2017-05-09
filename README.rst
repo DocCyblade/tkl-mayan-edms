@@ -8,7 +8,7 @@ or repository for electronic documents.
 
 This appliance includes all the standard features in `TurnKey Core`_:
 
-- Mayan EDMS 2.1 installed via PIP from `PyPI`_
+- Mayan EDMS 2.2 installed via PIP from `PyPI`_
 - Includes all pre-reqs: Virtualenv/Django/uWSGI/Celery/Redis/Supervisor
 - SSL support out of the box.
 - PostgreSQL is is installed as Mayan's backend database 

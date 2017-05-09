@@ -1,7 +1,7 @@
-turnkey-mayan-edms-14.1 (1) turnkey; urgency=low
+turnkey-mayan-edms-14.2 (1) turnkey; urgency=low
 
   * Initial release of appliance:
-      - Mayan EDMS v2.1
+      - Mayan EDMS v2.2
       - includes PostgreSQL for database backend
       - includes Nginx for web front end
       - upstream source install (PyPI)
@@ -12,5 +12,5 @@ turnkey-mayan-edms-14.1 (1) turnkey; urgency=low
   * Note: Please refer to turnkey-core's changelog for changes common to all
     appliances.
 
- -- Author Name <user@domain.tld>  DAY, DD MON YYYY HH:MM:SS -ZZZZ
+ -- Ken Robinson <ken@turnkeylinux.org>  Mon, 08 May 2017 23:54:00 -0400
 
