@@ -8,7 +8,7 @@ or repository for electronic documents.
 
 This appliance includes all the standard features in `TurnKey Core`_:
 
-- Mayan EDMS 2.1 installed via PIP from `PyPI`_
+- Mayan EDMS 2.2 installed via PIP from `PyPI`_
 - Includes all pre-reqs: Virtualenv/Django/uWSGI/Celery/Redis/Supervisor
 - SSL support out of the box.
 - PostgreSQL is is installed as Mayan's backend database 
@@ -29,8 +29,7 @@ Credentials *(passwords set at first boot)*
 -  Mayan EDMS Admin Account: **admin**
 
 .. _Mayan EDMS: http://www.mayan-edms.com
-.. _PyPI: https://pypi.python.org/pypi/mayan-edms/2.1.3
-.. _GitHub: https://github.com/odoo/odoo
+.. _PyPI: https://pypi.python.org/pypi/mayan-edms
 .. _TurnKey Core: https://www.turnkeylinux.org/core
 .. _Adminer: http://www.adminer.org/
 .. _upstream: https://github.com/DocCyblade/tkl-mayan-edms

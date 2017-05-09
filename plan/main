@@ -1,0 +1,40 @@
+#include <turnkey/base>
+
+/* Databse and DB Admin Tools */
+postgresql          /* PostgresSQL Server */
+
+adminer             /* Adminer PHP DB Admin */
+php5-cgi            /* adminer depend */
+php5-pgsql          /* needed for adminer pg support */
+
+webmin-postgresql   /* PostgreSQL Admin for Webmin */
+
+
+/* Needed for Mayan EDMS */
+nginx               /* Frontend Web Server - small, powerful, scalable web/proxy server */
+
+supervisor          /* Process Monitor - A system for controlling process state */
+redis-server        /* Backend for Celery - Persistent key-value database with network interface */
+
+python-pip          /* alternative Python package installer */
+python-virtualenv   /* Python virtual environment creator for Python 2.x */
+virtualenv          /* Python virtual environment creator for Python 3.x needed for above package to work */ 
+
+gcc                 /* GNU C compiler */
+python-dev          /* header files and a static library for Python */
+libpq-dev           /* header files for libpq5 */
+libjpeg-dev         /* Development files for the JPEG library */
+libpng-dev          /* PNG library - development */
+libtiff-dev         /* Tag Image File Format library (TIFF) */
+python-passlib      /* Comprehensive password hashing framework */
+
+libreoffice         /* office productivity suite */
+libmagic1           /* File type determination library using "magic" numbers */
+ghostscript         /* interpreter for the PostScript language and for PDF */
+gpgv                /* GNU privacy guard - signature verification tool */
+
+tesseract-ocr       /* Command line OCR tool */
+unpaper             /* post-processing tool for scanned pages */
+poppler-utils       /* PDF utilities (based on Poppler) */
+
+
