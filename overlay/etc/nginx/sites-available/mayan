@@ -1,36 +1,24 @@
+# redirect http to https
 server {
+    listen 0.0.0.0:80;
+    return 302 https://$host$request_uri;
+}
 
-    listen 443 ssl;
+# reverse proxy for Mayan-EDMS
+server {
+    listen 0.0.0.0:443 ssl;
+    access_log /var/log/nginx/mayan.log;
+    error_log /var/log/nginx/mayan_error.log;
     include /etc/nginx/include/ssl;
 
-    server_name localhost;
-
-    # Serve Mayan via uwsgi
     location / {
-        include uwsgi_params;
-        uwsgi_pass unix:/usr/share/mayan-edms/uwsgi.sock;
+         proxy_set_header Host $host;
+         proxy_set_header X-Real-IP $remote_addr;
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+         proxy_set_header X-Forwarded-Proto $scheme;
 
-        client_max_body_size 30M;  # Increse if your plan to upload bigger documents
-        proxy_read_timeout 30s;  # Increase if your document uploads take more than 30 seconds
-    }
+         proxy_pass http://127.0.0.1:8000/;
 
-    # Serve Mayan static files
-    location /static {
-        alias /usr/share/mayan-edms/mayan/media/static;
-        expires 1h;
-    }
-
-    # Fav icon
-    location /favicon.ico {
-        alias /usr/share/mayan-edms/mayan/media/static/appearance/images/favicon.ico;
-        expires 1h;
+         proxy_redirect off;
     }
 }
-
-# Redirect all http to https
-server {
-    listen      80;
-    server_name localhost;
-    return 301  https://$host$request_uri;
-}
-
