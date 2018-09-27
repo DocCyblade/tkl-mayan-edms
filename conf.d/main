@@ -1,167 +1,67 @@
 #!/bin/bash -ex
 
-# Demo files download function
-# dl [URL] [TARGET DIR] [TARGET FILE NAME] 
-#
-dl() {
-    [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
-    cd $2; curl -L -f $PROXY $1 -o $3; cd -
-}
-
-# Use FAB proxy with PIP
-# fab-pip-install [package]
-fab-pip-install() {
-   [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
-   pip $PROXY install $1
-}
-
-# Use FAB proxy with PIP Upgrade
-# fab-pip-upgrade [package]
-fab-pip-upgrade() {
-   [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
-   pip $PROXY install -U $1
-}
-
 # Set variables
-#
-DB_NAME=mayan
-DB_USER=mayan
+USER=mayan
+APP_NAME=mayan-edms
+APP_DIR=/opt/$APP_NAME
+BIN=$APP_DIR/bin
+DB_NAME=$USER
+DB_USER=$USER
 DB_PASS=$(mcookie)
+SUPERVISOR_CONF=/etc/supervisor/conf.d/mayan.conf
+ENV_CONF=/etc/$USER/env
 
-adduser mayan --disabled-password --disabled-login --no-create-home --gecos ""
+adduser $USER --disabled-password --disabled-login --no-create-home --gecos ""
 
-APP_SETTINGS=/usr/share/mayan-edms/mayan/settings/local.py
-APP_SETTINGS_TEMPLATE=/usr/share/mayan-edms/mayan/settings/settings.template
-APP_SETTINGS_DATA_DIR=/usr/share/mayan-edms/mayan/media/document_storage
+mkdir -p $APP_DIR
+virtualenv $APP_DIR
+chown $USER:$USER -R $APP_DIR
 
-# Create application directory (virtualenv)
-cd /usr/share
-virtualenv mayan-edms
+mkdir -p /var/log/$USER
+chown $USER:$USER -R /var/log/$USER
 
-# Activate the environment 
-source /usr/share/mayan-edms/bin/activate
+# create convenience env dirs file
+mkdir -p $(dirname $ENV_CONF)
+cat > $ENV_CONF <<EOF
+export MAYAN_DATABASE_ENGINE=django.db.backends.postgresql
+export MAYAN_DATABASE_NAME=$DB_NAME
+export MAYAN_DATABASE_PASSWORD=$DB_PASS
+export MAYAN_DATABASE_USER=$DB_USER
+export MAYAN_DATABASE_HOST=127.0.0.1
+export MAYAN_MEDIA_ROOT=$APP_DIR/media
+EOF
 
-# Upgrade PIP within the virtualenv
-fab-pip-upgrade pip
+service postgresql start
 
-# Install Mayan EDMS from PyPI
-fab-pip-install mayan-edms
+# Install mayan (pretty much) as per "advanced deployed" docs:
+# https://mayan.readthedocs.io/en/latest/topics/deploying.html
 
-# Install Python client for PostgreSQL
-fab-pip-install psycopg2-binary
-
-# Install Python client for Redis key-value store
-fab-pip-install redis 
-
-# Install Python uWSGI server
-fab-pip-install uwsgi
-
-
-# Start postgresql server
-/etc/init.d/postgresql start
-
-# Create the database user and database for the installation
-su postgres -c "createuser $DB_USER"
-su postgres -c "createdb -O $DB_USER $DB_NAME"
-su postgres -c "psql postgres" << EOF
+su - $USER -c "$BIN/pip install --no-cache-dir $APP_NAME"
+su - $USER -c "$BIN/pip install --no-cache-dir psycopg2==2.7.3.2 redis==2.10.6"
+su - postgres -c "createuser $DB_USER"
+su - postgres -c "createdb -O $DB_USER $DB_NAME"
+su - postgres -c "psql postgres" <<EOF
 alter user $DB_USER with encrypted password '$DB_PASS';
 EOF
 
+sed -i "\|MAYAN_DATABASE_PASSWORD|s|=.*|=$DB_PASS,|" $SUPERVISOR_CONF
 
-# Create log file directory for mayan and uwsgi
-mkdir /var/log/mayan
-mkdir /var/log/uwsgi
+# technically the 2nd & 3rd lines shouldn't be required for clean install, but
+# seem to make things go smoother
+su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py initialsetup"
+su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py makemigrations"
+su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py performupgrade"
+su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py collectstatic --noinput"
 
-# Make a convenience symbolic link 
-cd /usr/share/mayan-edms
-ln -s lib/python2.7/site-packages/mayan .
+# tweak redis
+echo "maxmemory-policy allkeys-lru" >> /etc/redis/redis.conf
 
-# Make doc store
-mkdir -p $APP_SETTINGS_DATA_DIR
+service postgresql stop
 
-# Create an initial settings file and db.template
-# We will recreate this on first boot, but create it
-# here for testing builds.
-#mayan-edms.py createsettings -v 3
-
-cat << EOF > $APP_SETTINGS_TEMPLATE
-
-DEBUG = False
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '$DB_NAME',
-        'USER': '$DB_USER',
-        'PASSWORD': '$DB_PASS',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
-BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
-
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 25
-
-EOF
-
-# Create initial settings
-mayan-edms.py createsettings
-
-# Apply the settings template
-cat $APP_SETTINGS_TEMPLATE >> $APP_SETTINGS
-
-# Make the installation and directory readable and writable by the webserver user
-chown mayan:mayan /usr/share/mayan-edms -R
-
-# fix mayan lock file permissions
-#   mayan uses lock files with 64 hex character names
-for fn in /tmp/*; do
-    bfn="$(basename $fn)"
-    if [[ ${#bfn} = 64 ]]; then
-        chown mayan:mayan $fn
-    fi
-done
-
-# Init Mayan Database
-MAYAN_DATABASE_ENGINE=django.db.backends.postgresql \
-    MAYAN_DATABASE_NAME="$DB_NAME" \
-    MAYAN_DATABASE_USER="$DB_USER" \
-    MAYAN_DATABASE_PASSWORD="$DB_PASS" \
-    MAYAN_DATABASE_HOST=127.0.0.1 su mayan -p -s '/bin/bash' -c 'source ./bin/activate; ./bin/mayan-edms.py initialsetup'
-
-# fix mayan lock file permissions
-#   mayan uses lock files with 64 hex character names
-for fn in /tmp/*; do
-    bfn="$(basename $fn)"
-    if [[ ${#bfn} = 64 ]]; then
-        chown mayan:mayan $fn
-    fi
-done
-
-
-# Disable the default NGINX site
+# nginx config
 rm /etc/nginx/sites-enabled/default
-
-# Enable the NGINX site for Mayan EDMS
-ln -s /etc/nginx/sites-available/mayan /etc/nginx/sites-enabled/
-
-# Collect static files
-mayan-edms.py collectstatic --noinput
-
-
-# Make the installation and directory readable and writable by the webserver user
-chown mayan:mayan /usr/share/mayan-edms -R
-
-# Stop postgresql server
-/etc/init.d/postgresql stop
-
-
-# Link Nginx Adminer conifg
+ln -s /etc/nginx/sites-available/mayan /etc/nginx/sites-enabled/mayan
 ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/adminer
 
 # Configure fastcgi for Adminer via Nginx (php-fastcgi)
-update-rc.d php-fastcgi defaults
-
+systemctl enable php-fastcgi
