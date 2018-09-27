@@ -1,3 +1,16 @@
+turnkey-mayan-edms-15.0 (1) turnkey; urgency=low
+
+  * Install latest Mayan-EDMS from upstream (v3.1.2) via pip.
+
+    - major re-wrtie of install code due to significant upstream changes.
+    - most dependencies also installed via pip.
+    - moved install location to /opt/mayan-edms (as per upstream docs).
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Thu, 27 Sep 2018 13:33:58 +1000
+
 turnkey-mayan-edms-14.2 (1) turnkey; urgency=low
 
   * Initial release of appliance:
