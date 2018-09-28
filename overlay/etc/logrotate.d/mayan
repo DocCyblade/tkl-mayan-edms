@@ -1,0 +1,8 @@
+/var/log/mayan/mayan-* {
+        weekly
+        rotate 12
+        copytruncate
+        compress
+        missingok
+        notifempty
+}
