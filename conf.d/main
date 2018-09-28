@@ -53,6 +53,9 @@ su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py makemigrations"
 su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py performupgrade"
 su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py collectstatic --noinput"
 
+# include mayan version in build log
+installed_version=$(cat $APP_DIR/media/system/VERSION)
+
 # tweak redis
 echo "maxmemory-policy allkeys-lru" >> /etc/redis/redis.conf
 
