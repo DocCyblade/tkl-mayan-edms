@@ -4,8 +4,8 @@
 postgresql          /* PostgresSQL Server */
 
 adminer             /* Adminer PHP DB Admin */
-php5-cgi            /* adminer depend */
-php5-pgsql          /* needed for adminer pg support */
+php-cgi             /* adminer depend */
+php-pgsql           /* needed for adminer pg support */
 
 webmin-postgresql   /* PostgreSQL Admin for Webmin */
 
@@ -25,16 +25,15 @@ python-dev          /* header files and a static library for Python */
 libpq-dev           /* header files for libpq5 */
 libjpeg-dev         /* Development files for the JPEG library */
 libpng-dev          /* PNG library - development */
-libtiff-dev         /* Tag Image File Format library (TIFF) */
+libtiff5-dev        /* Tag Image File Format library (TIFF) */
 python-passlib      /* Comprehensive password hashing framework */
 
 libreoffice         /* office productivity suite */
 libmagic1           /* File type determination library using "magic" numbers */
 ghostscript         /* interpreter for the PostScript language and for PDF */
-gpgv                /* GNU privacy guard - signature verification tool */
+gnupg1              /* GNU privacy guard - signature verification tool */
 
 tesseract-ocr       /* Command line OCR tool */
+sane-utils          /* scanner toolds */
 unpaper             /* post-processing tool for scanned pages */
 poppler-utils       /* PDF utilities (based on Poppler) */
-
-
