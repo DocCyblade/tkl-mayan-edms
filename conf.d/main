@@ -61,6 +61,7 @@ service postgresql stop
 # nginx config
 rm /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/mayan /etc/nginx/sites-enabled/mayan
+ln -s /etc/adminer/nginx.conf /etc/nginx/sites-available/adminer
 ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/adminer
 
 # Configure fastcgi for Adminer via Nginx (php-fastcgi)
