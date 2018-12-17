@@ -33,8 +33,8 @@ EOF
 
 service postgresql start
 
-# Install mayan (pretty much) as per "advanced deployed" docs:
-# https://mayan.readthedocs.io/en/latest/topics/deploying.html
+# Install mayan (pretty much) as per "basic deployment" from the "direct
+# deployments" docs: https://docs.mayan-edms.com/chapters/deploying.html
 
 su - $USER -c "$BIN/pip install --no-cache-dir $APP_NAME"
 su - $USER -c "$BIN/pip install --no-cache-dir psycopg2==2.7.3.2 redis==2.10.6"
@@ -57,7 +57,10 @@ su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py collectstatic --noinput"
 installed_version=$(cat $APP_DIR/media/system/VERSION)
 
 # tweak redis
-echo "maxmemory-policy allkeys-lru" >> /etc/redis/redis.conf
+REDIS_CONF=/etc/redis/redis.conf
+echo "maxmemory-policy allkeys-lru" >> $REDIS_CONF
+echo "save \"\"" >> $REDIS_CONF
+echo "databases 1" >> $REDIS_CONF
 
 # update mayan admin password so "First time login" is never displayed
 /usr/lib/inithooks/bin/mayan.py --email=admin@example.com --pass=$DB_PASS
