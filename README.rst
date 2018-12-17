@@ -8,7 +8,7 @@ or repository for electronic documents.
 
 This appliance includes all the standard features in `TurnKey Core`_:
 
-- Mayan EDMS 3.1.2 installed via PIP from `PyPI`_ into virtualenv within
+- Mayan EDMS 3.1.9 installed via PIP from `PyPI`_ into virtualenv within
   /opt/mayan-edms
 
   **Security note**: Updates to Mayan EDMS may require supervision so
@@ -41,9 +41,9 @@ upgrade.
 Read through the relevant Mayan EDMS `Release Notes`_ since the version you are
 upgrading from.
 
-Check Mayan EDMS `Advanced Deployment`_ documentation for dependency updates,
-and other adjustments that may be required. Then to upgrade to the latest
-version of Mayan EDMS from the command line::
+Check Mayan EDMS `Direct Deployment - Basic`_ documentation for dependency
+updates, and other adjustments that may be required. Then to upgrade to the
+latest version of Mayan EDMS from the command line::
 
     supervisorctl stop all
     ENV=/etc/mayan/env
@@ -66,5 +66,5 @@ Credentials *(passwords set at first boot)*
 .. _PyPI: https://pypi.python.org/pypi/mayan-edms
 .. _TurnKey Core: https://www.turnkeylinux.org/core
 .. _Adminer: https://www.adminer.org/
-.. _Release Notes: https://mayan.readthedocs.io/en/latest/releases/index.html
-.. _Advanced Deployment: https://mayan.readthedocs.io/en/latest/topics/deploying.html
+.. _Release Notes: https://docs.mayan-edms.com/releases/index.html
+.. _Direct Deployment - Basic: https://docs.mayan-edms.com/chapters/deploying.html#basic-deployment
