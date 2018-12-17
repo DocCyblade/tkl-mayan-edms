@@ -43,15 +43,16 @@ upgrading from.
 
 Check Mayan EDMS `Direct Deployment - Basic`_ documentation for dependency
 updates, and other adjustments that may be required. Then to upgrade to the
-latest version of Mayan EDMS from the command line::
+latest version (using 3.1.9 as an example below) of Mayan EDMS from the command
+line::
 
+    REMOVE=/etc/mayan/removals.txt
+    curl https://gitlab.com/mayan-edms/mayan-edms/raw/master/removals.txt > $REMOVE
     supervisorctl stop all
     ENV=/etc/mayan/env
     BIN=/opt/mayan-edms/bin
-    su - mayan -c ". $ENV && $BIN/pip install --upgrade --no-cache-dir mayan-edms"
-    su - mayan -c ". $ENV && $BIN/mayan-edms.py makemigrations"
-    su - mayan -c ". $ENV && $BIN/mayan-edms.py performupgrade"
-    su - mayan -c ". $ENV && $BIN/mayan-edms.py collectstatic --noinput"
+    su - mayan -c ". $ENV && $BIN/pip uninstall -r $REMOVE"
+    su - mayan -c ". $ENV && $BIN/pip install mayan-edms==3.1.9"
     supervisorctl start all
 
 
