@@ -10,14 +10,16 @@ server {
     access_log /var/log/nginx/mayan.log;
     error_log /var/log/nginx/mayan_error.log;
     include /etc/nginx/include/ssl;
+    client_max_body_size 50M;  # Increase to upload bigger documents
 
     location / {
-         proxy_set_header Host $host;
-         proxy_set_header X-Real-IP $remote_addr;
-         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-         proxy_pass_header Set-Cookie;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass_header Set-Cookie;
 
-         proxy_pass http://127.0.0.1:8000/;
-         proxy_redirect off;
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_redirect off;
+        proxy_read_timeout 30s; # Increase if your doc uploads take more than 30 sec
     }
 }

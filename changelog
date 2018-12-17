@@ -1,3 +1,11 @@
+turnkey-mayan-edms-15.1 (1) turnkey; urgency=low
+
+  * Install latest Mayan-EDMS from upstream (v3.1.9) via pip.
+
+  * Improve default upload size (50MB) and timeout (30s) - closes #1273.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Mon, 17 Dec 2018 11:50:46 +1100
+
 turnkey-mayan-edms-15.0 (1) turnkey; urgency=low
 
   * Install latest Mayan-EDMS from upstream (v3.1.2) via pip.
