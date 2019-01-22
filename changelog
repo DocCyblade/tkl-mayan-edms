@@ -4,7 +4,7 @@ turnkey-mayan-edms-15.1 (1) turnkey; urgency=low
 
   * Improve default upload size (50MB) and timeout (30s) - closes #1273.
 
- -- Jeremy Davis <jeremy@turnkeylinux.org>  Mon, 17 Dec 2018 11:50:46 +1100
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Tue, 22 Jan 2019 17:05:15 +1100
 
 turnkey-mayan-edms-15.0 (1) turnkey; urgency=low
 
