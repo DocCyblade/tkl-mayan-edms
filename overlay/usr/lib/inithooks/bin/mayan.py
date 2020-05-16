@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """Set Mayan EDMS admin password and email
 
 Option:
@@ -67,4 +67,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

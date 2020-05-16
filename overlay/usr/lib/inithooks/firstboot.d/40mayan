@@ -5,5 +5,3 @@
 
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
 $INITHOOKS_PATH/bin/mayan.py --pass="$APP_PASS" --email="$APP_EMAIL"
-
-
