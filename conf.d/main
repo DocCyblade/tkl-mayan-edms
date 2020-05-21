@@ -8,26 +8,30 @@ BIN=$APP_DIR/bin
 DB_NAME=$USER
 DB_USER=$USER
 DB_PASS=$(mcookie)
-SUPERVISOR_CONF=/etc/supervisor/conf.d/$USER.conf
+RE_PASS=$(mcookie)
+SV_CONF=/etc/supervisor/conf.d/$USER.conf
 ENV_CONF=/etc/$USER/env
 
 adduser $USER --disabled-password --disabled-login --no-create-home --gecos ""
 
 mkdir -p $APP_DIR
-virtualenv $APP_DIR
-chown $USER:$USER -R $APP_DIR
-
+virtualenv -p /usr/bin/python3 $APP_DIR
+chown -R $USER:$USER $APP_DIR
 mkdir -p /var/log/$USER
-chown $USER:$USER -R /var/log/$USER
+chown -R $USER:$USER /var/log/$USER
 
 # create convenience env dirs file
 mkdir -p $(dirname $ENV_CONF)
 cat > $ENV_CONF <<EOF
-export MAYAN_DATABASE_ENGINE=django.db.backends.postgresql
-export MAYAN_DATABASE_NAME=$DB_NAME
-export MAYAN_DATABASE_PASSWORD=$DB_PASS
-export MAYAN_DATABASE_USER=$DB_USER
-export MAYAN_DATABASE_HOST=127.0.0.1
+export MAYAN_DATABASES="{
+    'default':{
+        'ENGINE':'django.db.backends.postgresql',
+        'NAME':'$DB_NAME',
+        'PASSWORD':'$DB_PASS',
+        'USER':'$DB_USER',
+        'HOST':'127.0.0.1'
+    }
+}"
 export MAYAN_MEDIA_ROOT=$APP_DIR/media
 EOF
 
@@ -36,22 +40,24 @@ service postgresql start
 # Install mayan (pretty much) as per "basic deployment" from the "direct
 # deployments" docs: https://docs.mayan-edms.com/chapters/deploying.html
 
+su - $USER -c "$BIN/pip install --no-cache-dir -U pip"
 su - $USER -c "$BIN/pip install --no-cache-dir $APP_NAME"
-su - $USER -c "$BIN/pip install --no-cache-dir psycopg2==2.7.3.2 redis==2.10.6"
+su - $USER -c "$BIN/pip install --no-cache-dir psycopg2==2.8.4 redis==3.4.1"
 su - postgres -c "createuser $DB_USER"
 su - postgres -c "createdb -O $DB_USER $DB_NAME"
 su - postgres -c "psql postgres" <<EOF
 alter user $DB_USER with encrypted password '$DB_PASS';
 EOF
 
-sed -i "\|MAYAN_DATABASE_PASSWORD|s|=.*|=$DB_PASS,|" $SUPERVISOR_CONF
-
-# technically the 2nd & 3rd lines shouldn't be required for clean install, but
-# seem to avoid intermitant build issues
 su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py initialsetup"
-su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py makemigrations"
-su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py performupgrade"
-su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py collectstatic --noinput"
+su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py platformtemplate supervisord" \
+    > $SV_CONF
+
+#su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py makemigrations"
+#su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py performupgrade"
+#su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py collectstatic --noinput"
+
+#sed -i "\|MAYAN_DATABASES|s|D: [0-9a-z]*,|D: $DB_PASS,|" $SV_CONF
 
 # include mayan version in build log
 installed_version=$(cat $APP_DIR/media/system/VERSION)
@@ -60,7 +66,8 @@ installed_version=$(cat $APP_DIR/media/system/VERSION)
 REDIS_CONF=/etc/redis/redis.conf
 echo "maxmemory-policy allkeys-lru" >> $REDIS_CONF
 echo "save \"\"" >> $REDIS_CONF
-echo "databases 1" >> $REDIS_CONF
+echo "databases 2" >> $REDIS_CONF
+echo "requirepass $RE_PASS" >> $REDIS_CONF
 
 # update mayan admin password so "First time login" is never displayed
 /usr/lib/inithooks/bin/mayan.py --email=admin@example.com --pass=$DB_PASS
