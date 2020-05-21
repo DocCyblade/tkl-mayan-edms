@@ -57,13 +57,13 @@ def main():
 
     inithooks_cache.write('APP_EMAIL', email)
     
-    hashpass = djpass.encrypt(password)
+    hashpass = djpass.hash(password)
 
     p = PostgreSQL(database='mayan')
 
-    p.execute('UPDATE autoadmin_autoadminsingleton SET password = NULL, password_hash = NULL, account_id = NULL WHERE (id = 1);')
-    p.execute('UPDATE auth_user SET email = \'%s\' WHERE username = \'admin\';' % email)
-    p.execute('UPDATE auth_user SET password = \'%s\' WHERE username = \'admin\';' % hashpass)
+    p.execute(('UPDATE autoadmin_autoadminsingleton SET password = NULL, password_hash = NULL, account_id = NULL WHERE (id = 1);').encode('utf8'))
+    p.execute(('UPDATE auth_user SET email = \'%s\' WHERE username = \'admin\';' % email).encode('utf8'))
+    p.execute(('UPDATE auth_user SET password = \'%s\' WHERE username = \'admin\';' % hashpass).encode('utf8'))
 
 if __name__ == "__main__":
     main()
