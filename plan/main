@@ -17,7 +17,7 @@ supervisor          /* Process Monitor - A system for controlling process state 
 redis-server        /* Backend for Celery - Persistent key-value database with network interface */
 
 python3-pip         /* alternative Python package installer */
-virtualenv          /* Python virtual environment creator (Python 3.x) */ 
+virtualenv          /* Python virtual environment creator (Python 3.x) */
 
 gcc                 /* GNU C compiler */
 g++                 /* GNU C++ compiler */
