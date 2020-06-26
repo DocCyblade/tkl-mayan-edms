@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 Generate unique Mayan-EDMS secret leveraging Django (i.e. using the same 
@@ -6,7 +6,7 @@ method Mayan does on initial install)
 """
 
 import sys
-sys.path.append('/opt/mayan-edms/lib/python2.7/site-packages')
+sys.path.append('/opt/mayan-edms/lib/python3/site-packages')
 
 from django.utils.crypto import get_random_string
 

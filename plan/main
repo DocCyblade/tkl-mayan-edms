@@ -16,24 +16,29 @@ nginx               /* Frontend Web Server - small, powerful, scalable web/proxy
 supervisor          /* Process Monitor - A system for controlling process state */
 redis-server        /* Backend for Celery - Persistent key-value database with network interface */
 
-python-pip          /* alternative Python package installer */
-python-virtualenv   /* Python virtual environment creator for Python 2.x */
-virtualenv          /* Python virtual environment creator for Python 3.x needed for above package to work */ 
+python3-pip         /* alternative Python package installer */
+virtualenv          /* Python virtual environment creator (Python 3.x) */
 
 gcc                 /* GNU C compiler */
-python-dev          /* header files and a static library for Python */
-libpq-dev           /* header files for libpq5 */
+g++                 /* GNU C++ compiler */
+python3-dev         /* header files and a static library for Python */
+libpq-dev           /* header files for libpq */
 libjpeg-dev         /* Development files for the JPEG library */
 libpng-dev          /* PNG library - development */
-libtiff5-dev        /* Tag Image File Format library (TIFF) */
-python-passlib      /* Comprehensive password hashing framework */
+libtiff-dev         /* Tag Image File Format library (TIFF) */
+zlib1g-dev          /* header files for zlib (gzip/pkzip) */
+python3-passlib     /* Comprehensive password hashing framework */
 
 libreoffice         /* office productivity suite */
 libmagic1           /* File type determination library using "magic" numbers */
+libfuse2            /* FUSE library */
 ghostscript         /* interpreter for the PostScript language and for PDF */
 gnupg1              /* GNU privacy guard - signature verification tool */
 
 tesseract-ocr       /* Command line OCR tool */
+graphviz            /* Graph drawing */
+libimage-exiftool-perl
+                    /* Provides 'exiftool' - tool to read/write file metadata */
 sane-utils          /* scanner toolds */
 unpaper             /* post-processing tool for scanned pages */
 poppler-utils       /* PDF utilities (based on Poppler) */

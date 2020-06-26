@@ -1,3 +1,23 @@
+turnkey-mayan-edms-16.0 (1) turnkey; urgency=low
+
+  * Install latest (Python3) Mayan-EDMS from upstream (via pip) - v3.4.7.
+
+  * Explcitly disable TLS<1.2 (i.e. SSLv3, TLSv1, TLSv1.1). (v15.x
+    TurnKey releases supported TLS 1.2, but could fallback as low as TLSv1).
+
+  * Update SSL/TLS cyphers to provide "Intermediate" browser/client support
+    (suitable for "General-purpose servers with a variety of clients,
+    recommended for almost all systems"). As provided by Mozilla via
+    https://ssl-config.mozilla.org/.
+
+  * Updated all relevant Debian packages to Buster/10 versions; including
+    PHP 7.3 (used for Adminer in Mayan-EDMS appliance).
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Wed, 24 Jun 2020 14:10:02 +1000
+
 turnkey-mayan-edms-15.1 (1) turnkey; urgency=low
 
   * Install latest Mayan-EDMS from upstream (v3.1.9) via pip.
