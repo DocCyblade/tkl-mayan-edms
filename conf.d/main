@@ -58,6 +58,9 @@ su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py platformtemplate supervisord" \
 #su - $USER -c ". $ENV_CONF && $BIN/mayan-edms.py collectstatic --noinput"
 
 #sed -i "\|MAYAN_DATABASES|s|D: [0-9a-z]*,|D: $DB_PASS,|" $SV_CONF
+echo 'LOGGING_LOG_FILE_PATH: /var/log/mayan/error.log' > $APP_DIR/media/config.yml
+touch /var/log/mayan/error.log
+chown mayan:mayan /var/log/mayan/error.log
 
 # include mayan version in build log
 installed_version=$(cat $APP_DIR/media/system/VERSION)
