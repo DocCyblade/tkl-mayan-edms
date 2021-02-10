@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """Set Mayan EDMS admin password and email
 
 Option:
@@ -18,16 +18,16 @@ from passlib.hash import django_pbkdf2_sha256 as djpass
 
 def usage(s=None):
     if s:
-        print >> sys.stderr, "Error:", s
-    print >> sys.stderr, "Syntax: %s [options]" % sys.argv[0]
-    print >> sys.stderr, __doc__
+        print("Error:", s, file=sys.stderr)
+    print("Syntax: %s [options]" % sys.argv[0], file=sys.stderr)
+    print(__doc__, file=sys.stderr)
     sys.exit(1)
 
 def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
                                        ['help', 'pass=', 'email='])
-    except getopt.GetoptError, e:
+    except getopt.GetoptError as e:
         usage(e)
 
     password = ""
@@ -57,14 +57,13 @@ def main():
 
     inithooks_cache.write('APP_EMAIL', email)
     
-    hashpass = djpass.encrypt(password)
+    hashpass = djpass.hash(password)
 
     p = PostgreSQL(database='mayan')
 
-    p.execute('UPDATE autoadmin_autoadminsingleton SET password = NULL, password_hash = NULL, account_id = NULL WHERE (id = 1);')
-    p.execute('UPDATE auth_user SET email = \'%s\' WHERE username = \'admin\';' % email)
-    p.execute('UPDATE auth_user SET password = \'%s\' WHERE username = \'admin\';' % hashpass)
+    p.execute(('UPDATE autoadmin_autoadminsingleton SET password = NULL, password_hash = NULL, account_id = NULL WHERE (id = 1);').encode('utf8'))
+    p.execute(('UPDATE auth_user SET email = \'%s\' WHERE username = \'admin\';' % email).encode('utf8'))
+    p.execute(('UPDATE auth_user SET password = \'%s\' WHERE username = \'admin\';' % hashpass).encode('utf8'))
 
 if __name__ == "__main__":
     main()
-
